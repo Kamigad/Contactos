@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -40,6 +41,21 @@ public class ContactoControlador {
     @PostMapping("/agregar")
     public String agregarContacto(@ModelAttribute("contactoForma") Contacto contacto){
         logger.info("Se agrego el nuevo contacto: " + contacto.toString());
+        contactoServicio.guardarContacto(contacto);
+        return "redirect:/"; // redirigimos al controlador el path "/"
+    }
+
+    @GetMapping("/editar/{id}")
+    public String mostrarEditar(@PathVariable(value = "id") Integer idContacto, Model modelo){
+        Contacto contacto = contactoServicio.buscarContactoId(idContacto);
+        logger.info("Contacto a editar (mostrar): " + contacto);
+        modelo.addAttribute("contactoEditar",contacto);
+        return "editar"; //editar.html
+    }
+
+    @PostMapping("/editar")
+    public String editarContacto(@ModelAttribute("contactoEditar") Contacto contacto){
+        logger.info("Contacto a editar(editado): " + contacto.toString());
         contactoServicio.guardarContacto(contacto);
         return "redirect:/"; // redirigimos al controlador el path "/"
     }
